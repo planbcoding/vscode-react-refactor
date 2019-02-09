@@ -1,13 +1,13 @@
 {
     "name": "vscode-react-refactor",
     "displayName": "VSCode React Refactor",
-    "description": "Refactor your overgrown JSX without worring about the given data.",
+    "description": "Recompose your overgrown JSX without worrying about the given data.",
     "publisher": "planbcoding",
     "repository": "https://github.com/planbcoding/vscode-react-refactor.git",
     "icon": "assets/images/icon.png",
     "author": "",
     "license": "ISC",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "engines": {
         "vscode": "^1.1.21"
     },
