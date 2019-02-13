@@ -196,7 +196,7 @@ const ensureReactIsImported = (editor: vscode.TextEditor) => {
         editor.edit(edit => {
             edit.insert(
                 new vscode.Position(0, 0),
-                'import React from "react"\n;'
+                'import React from "react";\n'
             );
         });
     }
