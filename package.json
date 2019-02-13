@@ -5,9 +5,14 @@
     "publisher": "planbcoding",
     "repository": "https://github.com/planbcoding/vscode-react-refactor.git",
     "icon": "assets/images/icon.png",
-    "author": "",
+    "author": "planbcoding",
+    "keywords": [
+        "react",
+        "refactor",
+        "tools"
+    ],
     "license": "ISC",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "engines": {
         "vscode": "^1.1.21"
     },
