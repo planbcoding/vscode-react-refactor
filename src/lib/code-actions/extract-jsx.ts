@@ -266,7 +266,8 @@ const executeCodeAction = (
     paths
         .filter(path => !isPathRemoved(path))
         .forEach(path => {
-            let name, container, expression;
+            const expression = codeFromNode(path.node);
+            let name, container;
 
             if (path.isMemberExpression()) {
                 if (isFunctionBinding(path)) {
@@ -274,7 +275,6 @@ const executeCodeAction = (
                     name = path.node.callee.object.property.name;
                 } else {
                     name = path.node.property.name;
-                    expression = codeFromNode(path.node);
                     container = objects.find(o =>
                         expression.startsWith(o.object)
                     );
@@ -291,11 +291,15 @@ const executeCodeAction = (
                     );
                 }
             } else {
-                name = ensurePropertyIsUnique(passedProps, name);
-                passedProps[name] = t.cloneDeep(path.node);
+                name = ensurePropertyIsUnique(passedProps, name, expression);
+                if (name) {
+                    passedProps[name] = t.cloneDeep(path.node);
+                }
             }
 
-            path.replaceWith(createPropsExpression(produceClass, name));
+            if (name) {
+                path.replaceWith(createPropsExpression(produceClass, name));
+            }
         });
 
     const extractedJSX = codeFromNode(selectedPath.node);
@@ -390,8 +394,15 @@ const getComponentStartAt = path => {
     return path.node.start;
 };
 
-const ensurePropertyIsUnique = (propsMap: {}, name: string) =>
-    propsMap[name] ? ensurePropertyIsUnique(propsMap, `_${name}`) : name;
+const ensurePropertyIsUnique = (propsMap: {}, name: string, value: any) => {
+    if (!propsMap[name]) {
+        return name;
+    }
+    if (codeFromNode(propsMap[name]) !== value) {
+        return ensurePropertyIsUnique(propsMap, `_${name}`, value);
+    }
+    return false;
+};
 
 const matchRouteInObject = (
     object: { object: string; property: string },
