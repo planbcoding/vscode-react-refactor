@@ -21,7 +21,7 @@ import {
 } from "../utils";
 
 /**
- * Extract to file code action
+ * Extract code to function action
  */
 export const extractToFunction = async () => {
     const editor = vscode.window.activeTextEditor;
@@ -35,7 +35,7 @@ export const extractToFunction = async () => {
 };
 
 /**
- * Extract to file code action
+ * Extract code to file action
  */
 export const extractToFile = async () => {
     const editor = vscode.window.activeTextEditor;
@@ -292,14 +292,12 @@ const executeCodeAction = (
                 }
             } else {
                 name = ensurePropertyIsUnique(passedProps, name, expression);
-                if (name) {
+                if (!passedProps[name]) {
                     passedProps[name] = t.cloneDeep(path.node);
                 }
             }
 
-            if (name) {
-                path.replaceWith(createPropsExpression(produceClass, name));
-            }
+            path.replaceWith(createPropsExpression(produceClass, name));
         });
 
     const extractedJSX = codeFromNode(selectedPath.node);
@@ -395,13 +393,10 @@ const getComponentStartAt = path => {
 };
 
 const ensurePropertyIsUnique = (propsMap: {}, name: string, value: any) => {
-    if (!propsMap[name]) {
+    if (!propsMap[name] || codeFromNode(propsMap[name]) === value) {
         return name;
     }
-    if (codeFromNode(propsMap[name]) !== value) {
-        return ensurePropertyIsUnique(propsMap, `_${name}`, value);
-    }
-    return false;
+    return ensurePropertyIsUnique(propsMap, `_${name}`, value);
 };
 
 const matchRouteInObject = (

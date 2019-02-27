@@ -58,6 +58,14 @@ export const isArrayFunctionCall = path =>
 export const isFunctionBinding = path =>
     path.key === "callee" && path.node.property.name === "bind";
 
+export const isPathInRange = (start: number, end: number) => (path: NodePath) =>
+    path.node.start >= start && path.node.end <= end;
+
+export const isClassMemberExpression = ({ node }) =>
+    t.isMemberExpression(node) &&
+    (t.isThisExpression(node.object) ||
+        isClassMemberExpression({ node: node.object }));
+
 export const isPathRemoved = path =>
     path.findParent(path => path.removed) ? true : false;
 
@@ -145,56 +153,47 @@ export const findComponentMemberReferences = (componentPath, targetPath) => {
         );
     }
 
-    const blockPath = path.findParent(path => path.isBlockStatement());
-    if (blockPath) {
-        blockPath.traverse({
-            VariableDeclaration(path) {
-                path.node.declarations.forEach(declaration => {
-                    if (isClassMemberExpression({ node: declaration.init })) {
+    walkParents(
+        path,
+        (parentPath: NodePath) => parentPath.isBlockStatement(),
+        (parentPath: NodePath) => {
+            parentPath.traverse({
+                VariableDeclaration(path) {
+                    path.node.declarations.forEach(declaration => {
                         paths = paths.concat(
                             getVariableReferences(
-                                blockPath.scope,
+                                parentPath.scope,
                                 declaration.id
                             )
                         );
-                    } else if (t.isCallExpression(declaration.init)) {
-                        paths = paths.concat(
-                            getVariableReferences(
-                                blockPath.scope,
-                                declaration.id
-                            )
-                        );
-                    }
-                });
-            }
-        });
-    }
-
-    walkParentFunctions(path, (parentPath: NodePath) => {
-        parentPath.node.params.forEach(param => {
-            paths = paths.concat(
-                getVariableReferences(parentPath.scope, param)
-            );
-        });
-    });
+                    });
+                }
+            });
+        }
+    );
+    walkParents(
+        path,
+        (parentPath: NodePath) => parentPath.isArrowFunctionExpression(),
+        (parentPath: NodePath) => {
+            parentPath.node.params.forEach(param => {
+                paths = paths.concat(
+                    getVariableReferences(parentPath.scope, param)
+                );
+            });
+        }
+    );
 
     return paths;
 };
 
-export const isPathInRange = (start: number, end: number) => (path: NodePath) =>
-    path.node.start >= start && path.node.end <= end;
-
-export const isClassMemberExpression = ({ node }) =>
-    t.isMemberExpression(node) &&
-    (t.isThisExpression(node.object) ||
-        isClassMemberExpression({ node: node.object }));
-
-export const walkParentFunctions = (path: NodePath, callback) => {
-    const parentPath = path.findParent(path =>
-        path.isArrowFunctionExpression()
-    );
+export const walkParents = (
+    path: NodePath,
+    condition: Function,
+    callback: Function
+) => {
+    const parentPath = path.findParent(condition);
     if (parentPath) {
         callback(parentPath);
-        walkParentFunctions(parentPath, callback);
+        walkParents(parentPath, condition, callback);
     }
 };
