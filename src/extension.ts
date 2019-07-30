@@ -4,7 +4,7 @@ import * as extractJSX from "./lib/code-actions/extract-jsx";
 export class CodeActionProvider implements vscode.CodeActionProvider {
     public provideCodeActions(): vscode.Command[] {
         const editor = vscode.window.activeTextEditor;
-        if (!editor) {
+        if (!editor || editor.selection.isEmpty) {
             return [];
         }
         const selectedText = editor.document.getText(editor.selection);
@@ -23,7 +23,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
     }
 }
 
-export const activate = context => {
+export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
         vscode.languages.registerCodeActionsProvider(
             { pattern: "**/*.{js,jsx,ts,tsx}", scheme: "file" },

@@ -28,9 +28,6 @@ export const templateToAst = (code: string) =>
 
 export const isJSX = (code: string) => {
     let ast = jsxToAst(code);
-    if (!ast) {
-        ast = jsxToAst(`<>code</>`);
-    }
     return ast && ast.expression && t.isJSX(ast.expression);
 };
 
