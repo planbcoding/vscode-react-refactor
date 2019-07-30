@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import traverse, { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
-import { pickBy } from "lodash";
+import pickBy = require("lodash.pickby");
 import LinesAndColumns from "lines-and-columns";
 import {
     isJSX,
