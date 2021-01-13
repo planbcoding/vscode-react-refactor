@@ -27,7 +27,7 @@ export const extractToFunction = async () => {
     const editor = vscode.window.activeTextEditor;
     try {
         await extractAndReplaceSelection(editor);
-        await vscode.commands.executeCommand("editor.action.formatDocument");
+        await executeFormatCommand();
         resetSelection(editor);
     } catch (error) {
         vscode.window.showErrorMessage(error);
@@ -51,14 +51,10 @@ export const extractToFile = async () => {
 
         const disposable = watcher.onDidCreate(async uri => {
             disposable.dispose();
-            await vscode.commands.executeCommand(
-                "editor.action.formatDocument"
-            );
+            await executeFormatCommand();
             const document = await vscode.workspace.openTextDocument(uri);
             await vscode.window.showTextDocument(document);
-            await vscode.commands.executeCommand(
-                "editor.action.formatDocument"
-            );
+            await executeFormatCommand();
             ensureReactIsImported(vscode.window.activeTextEditor);
         });
 
@@ -75,6 +71,9 @@ export const extractToFile = async () => {
     }
 };
 
+/**
+ * @param {vscode.TextEditor} editor
+ */
 const resetSelection = (editor: vscode.TextEditor) => {
     const pos = editor.selection.end;
     editor.selection = new vscode.Selection(pos, pos);
@@ -88,6 +87,10 @@ const resetSelection = (editor: vscode.TextEditor) => {
 export const isCodeActionAvailable = (code: string): Boolean => {
     return isJSX(code);
 };
+
+export const executeFormatCommand = () => 
+    vscode.commands.executeCommand("editor.action.formatDocument");
+
 
 /**
  * Extract selected JSX to a new React component
@@ -267,37 +270,37 @@ const executeCodeAction = (
         .filter(path => !isPathRemoved(path))
         .forEach(path => {
             const expression = codeFromNode(path.node);
-            let name, container;
+            let propName, container;
 
             if (path.isMemberExpression()) {
                 if (isFunctionBinding(path)) {
                     path = path.parentPath;
-                    name = path.node.callee.object.property.name;
+                    propName = path.node.callee.object.property.name;
                 } else {
-                    name = path.node.property.name;
+                    propName = path.node.property.name;
                     container = objects.find(o =>
                         expression.startsWith(o.object)
                     );
                 }
             } else {
-                name = path.node.name;
+                propName = path.node.name;
             }
 
             if (container) {
-                name = matchRouteInObject(container, expression);
+                propName = matchRouteInObject(container, expression);
                 if (!passedProps[container.property]) {
                     passedProps[container.property] = t.identifier(
                         container.object
                     );
                 }
             } else {
-                name = ensurePropertyIsUnique(passedProps, name, expression);
-                if (!passedProps[name]) {
-                    passedProps[name] = t.cloneDeep(path.node);
+                propName = ensurePropertyIsUnique(passedProps, propName, expression);
+                if (!passedProps[propName]) {
+                    passedProps[propName] = t.cloneDeep(path.node);
                 }
             }
 
-            path.replaceWith(createPropsExpression(produceClass, name));
+            path.replaceWith(createPropsExpression(produceClass, propName));
         });
 
     const extractedJSX = codeFromNode(selectedPath.node);
