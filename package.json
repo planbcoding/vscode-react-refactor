@@ -28,12 +28,12 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.react-refactor.extractToFile",
-                "title": "Extract to Component file"
+                "command": "extension.react-refactor.extractToClass",
+                "title": "Extract JSX to Class Component"
             },
             {
                 "command": "extension.react-refactor.extractToFunction",
-                "title": "Extract to Component function"
+                "title": "Extract JSX to Functional Component"
             }
         ],
         "menus": {
@@ -43,6 +43,15 @@
             {
                 "title": "VSCode React Refactor",
                 "properties": {
+                    "vscodeReactRefactor.functionType": {
+                        "type": "string",
+                        "enum": [
+                            "function",
+                            "arrowFunction"
+                        ],
+                        "default": "function",
+                        "description": "The created React Functional Component will be"
+                    },
                     "vscodeReactRefactor.babel.customPlugins": {
                         "type": "string",
                         "default": "",

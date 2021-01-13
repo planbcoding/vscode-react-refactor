@@ -17,16 +17,18 @@ import {
 import {
     askForName,
     generateClassComponent,
-    generatePureComponent
+    generateArrowFunctionComponent,
+    generateFunctionalComponent
 } from "../utils";
 
 /**
- * Extract code to function action
+ * Extract code to new React component
+ * @param {boolean} produceClass 
  */
-export const extractToFunction = async () => {
+export const extractToComponent = async (produceClass: boolean = false) => {
     const editor = vscode.window.activeTextEditor;
     try {
-        await extractAndReplaceSelection(editor);
+        await extractAndReplaceSelection(editor, produceClass);
         await executeFormatCommand();
         resetSelection(editor);
     } catch (error) {
@@ -141,11 +143,24 @@ const extractAndReplaceSelection = async (
  * @param document
  * @param rangeOrSelection
  */
-const executeMoveToNewFileCodeAction = (
+const executeMoveToNewFileCodeAction = async (
     document: vscode.TextDocument,
     rangeOrSelection: vscode.Range | vscode.Selection
 ) => {
+    
     const codeAction = "Move to a new file";
+//     const args = {
+//         file: document.fileName,
+//         refactor: codeAction,
+//         action: codeAction,
+//         startLine: rangeOrSelection.start.line + 1,
+//         startOffset: rangeOrSelection.start.character + 1,
+//         endLine: rangeOrSelection.end.line + 1,
+//         endOffset: rangeOrSelection.end.character + 1
+//     };
+
+//   await vscode.commands.executeCommand('_typescript.applyCodeActionCommand', args);
+
     return vscode.commands.executeCommand(
         "_typescript.applyRefactoring",
         document,
@@ -304,9 +319,15 @@ const executeCodeAction = (
         });
 
     const extractedJSX = codeFromNode(selectedPath.node);
+
+    const functionTypeConfig: string = vscode.workspace
+        .getConfiguration()
+        .get('vscodeReactRefactor.functionType');
+        
     const createComponent = produceClass
         ? generateClassComponent
-        : generatePureComponent;
+        : (functionTypeConfig === 'arrowFunction' ? generateArrowFunctionComponent : generateFunctionalComponent);
+
     const replaceJSXCode = codeFromNode(createJSXElement(name, passedProps));
     const componentCode = createComponent(name, extractedJSX);
     const insertAt = getComponentStartAt(parentPath);

@@ -11,12 +11,12 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
         const codeActions = [];
         if (extractJSX.isCodeActionAvailable(selectedText)) {
             codeActions.push({
-                command: "extension.react-refactor.extractToFile",
-                title: "Extract JSX to file"
+                command: "extension.react-refactor.extractToFunction",
+                title: "Extract JSX to Functional Component"
             });
             codeActions.push({
-                command: "extension.react-refactor.extractToFunction",
-                title: "Extract JSX to function"
+                command: "extension.react-refactor.extractToClass",
+                title: "Extract JSX to Class Component"
             });
         }
         return codeActions;
@@ -33,13 +33,13 @@ export const activate = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "extension.react-refactor.extractToFunction",
-            extractJSX.extractToFunction
+            () => extractJSX.extractToComponent()
         )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "extension.react-refactor.extractToFile",
-            extractJSX.extractToFile
+            "extension.react-refactor.extractToClass",
+            () => extractJSX.extractToComponent(true)
         )
     );
 };

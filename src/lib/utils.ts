@@ -36,7 +36,13 @@ class ${name} extends React.Component {
 }
 `;
 
-export const generatePureComponent = (name: string, renderCode: string): string => `
+export const generateFunctionalComponent = (name: string, renderCode: string): string => `
+function ${name}(${renderCode.match(/props/) ? "props" : ""}) {
+    return (${renderCode});
+}
+`;
+
+export const generateArrowFunctionComponent = (name: string, renderCode: string): string => `
 const ${name} = (${renderCode.match(/props/) ? "props" : ""}) => (
     ${renderCode}
 );
