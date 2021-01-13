@@ -30,7 +30,7 @@ export const extractToFunction = async () => {
         await executeFormatCommand();
         resetSelection(editor);
     } catch (error) {
-        vscode.window.showErrorMessage(error);
+        vscode.window.showErrorMessage(error.message);
     }
 };
 
@@ -64,10 +64,10 @@ export const extractToFile = async () => {
         const start = new vscode.Position(insertPos.line, 0);
         const end = new vscode.Position(insertPos.line + cmpLines, 0);
         const selection = new vscode.Selection(start, end);
-
+        
         await executeMoveToNewFileCodeAction(editor.document, selection);
     } catch (error) {
-        vscode.window.showErrorMessage(error);
+        vscode.window.showErrorMessage(error.message);
     }
 };
 
