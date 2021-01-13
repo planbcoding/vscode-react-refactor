@@ -1,18 +1,29 @@
+import * as vscode from "vscode";
 import { parse, ParserOptions } from "@babel/parser";
 import { transformFromAst } from "@babel/core";
 import { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import template from "@babel/template";
 
-export const parsingOptions = {
-    plugins: ["objectRestSpread", "classProperties", "typescript", "jsx"],
-    sourceType: "module"
-};
+const getParserOptions = () => {
+    const customPluginsConfig: string = vscode.workspace
+        .getConfiguration()
+        .get('vscodeReactRefactor.babel.customPlugins');
+
+    const customPlugins = customPluginsConfig.split(',').map(s => s.trim()).filter(s => !!s);
+    return {
+        plugins: [
+            "objectRestSpread", "classProperties", "typescript", "jsx",
+            ...customPlugins
+        ],
+        sourceType: "module"
+    }
+}
 
 export const codeToAst = (code: string) =>
     parse(code, <ParserOptions>{
         startLine: 0,
-        ...parsingOptions
+        ...getParserOptions()
     });
 
 export const jsxToAst = (code: string) => {
@@ -24,7 +35,7 @@ export const jsxToAst = (code: string) => {
 };
 
 export const templateToAst = (code: string) =>
-    template.ast(code, parsingOptions);
+    template.ast(code, getParserOptions());
 
 export const isJSX = (code: string) => {
     let ast = jsxToAst(code);

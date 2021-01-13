@@ -41,7 +41,14 @@
         },
         "configuration": [
             {
-                "title": "VSCode React Refactor"
+                "title": "VSCode React Refactor",
+                "properties": {
+                    "vscodeReactRefactor.babel.customPlugins": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Additional plugin names for @babel/parser to use (eg: flow, flowComments)"
+                    }
+                }
             }
         ]
     },
