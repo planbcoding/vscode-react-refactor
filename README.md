@@ -1,25 +1,39 @@
-This simple extension provides refactor code actions for React developers.
-
-Recompose your overgrown JSX without worrying about the given data. This extension will do the dirty work for you without breaking your code.
+This simple extension provides JSX refactor code actions for React developers.
 
 ## Features
 
--   Extract JSX element to file or function
+-   Extract JSX code parts to a new class or functionnal component
 -   Supports TypeScript and TSX
 -   Works with classes, functions and arrow functions
 -   Handles key attribute and function bindings
--   Works well with new Hooks API
+-   Compatible with React Hooks API
 
 ## Preview
 
 ![preview](assets/images/preview.gif)
 
-## Concept
 
-The `Extract to file` function uses the `Move to new file` refactor code action provided by the TS Language Service. This makes sure that the necessary dependencies shall be moved to the new file and the local dependencies shall be exported as well. The result is so satisfying using TS Language Service, no need for re-implementing such features those are already developed and work well - obviously with some corresponding modifications done. As TypeScript prefers named exports to default exports so this is a limitation of the extension.
+## 1.1.0 Update
 
-After refactoring the code, the extension runs a code formatting which will be done through the default code formatter of your VSCode instance. For the best result it is recommended to use Prettier extension that supports fix self closing tags, long lines etc..
+-   Added `Extract to Class Component` Code action
+-   Added option to config Custom Babel plugins used by parser
+-   Added option to choose generated function type
+-   Added error message on parse error
+-   Upgraded @babel modules to the latest version
+-   Removed `Extract to File` Code action for now (due to VSCode changes), workaround is to call manually `Move to new file` on the newly created Component
 
-## Reporting bugs
 
-If something doesn't work don't panic. As this is an early version of the code it is also possible that you found a bug. Please don't hesitate to open a github issue (with specific code example) if you face any anomalies.
+## Help to debug
+
+### Code Action doesn't appear when select JSX code
+
+If something doesn't work don't panic. Probably you use a language feature that is not recognized by the parser within you module (file). Now you get back an error message about what's going on. Based on that use Custom Babel plugins setting to configure it for your needs. See: https://babeljs.io/docs/en/babel-parser#plugins.
+
+If no luck please open an issue with
+-   smallest non-working code snippet to reproduce the issue
+-   the received error message
+
+
+### Refactoring happens but results broken code
+
+Please record an issue with the original code and the result after refactor executed.
