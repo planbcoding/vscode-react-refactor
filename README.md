@@ -19,8 +19,9 @@ This simple extension provides JSX refactor code actions for React developers.
 -   Added option to config Custom Babel plugins used by parser
 -   Added option to choose generated function type
 -   Added error message on parse error
--   Upgraded @babel modules to the latest version
+-   Updated @babel modules to the latest version
 -   Removed `Extract to File` Code action for now (due to VSCode changes), workaround is to call manually `Move to new file` on the newly created Component
+-   Updated vscode to the latest and migrated extension to webpack
 
 
 ## Help to debug
