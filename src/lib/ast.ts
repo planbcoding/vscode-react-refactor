@@ -6,16 +6,13 @@ import * as t from "@babel/types";
 import template from "@babel/template";
 
 const getParserOptions = () => {
-    const customPluginsConfig: string = vscode.workspace
+    const pluginsConfig: string = vscode.workspace
         .getConfiguration()
-        .get('vscodeReactRefactor.babel.customPlugins');
+        .get('vscodeReactRefactor.babelPlugins');
 
-    const customPlugins = customPluginsConfig.split(',').map(s => s.trim()).filter(s => !!s);
+    const plugins = pluginsConfig.split(',').map(s => s.trim()).filter(s => !!s);
     return {
-        plugins: [
-            "objectRestSpread", "classProperties", "typescript", "jsx",
-            ...customPlugins
-        ],
+        plugins,
         sourceType: "module"
     }
 }
@@ -29,7 +26,8 @@ export const codeToAst = (code: string) =>
 export const jsxToAst = (code: string) => {
     try {
         return templateToAst(code);
-    } catch (e) {
+    } catch (error) {
+        vscode.window.showErrorMessage(error.message);
         return false;
     }
 };

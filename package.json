@@ -52,9 +52,9 @@
                         "default": "function",
                         "description": "The created React Functional Component will be"
                     },
-                    "vscodeReactRefactor.babel.customPlugins": {
+                    "vscodeReactRefactor.babelPlugins": {
                         "type": "string",
-                        "default": "",
+                        "default": "objectRestSpread, classProperties, typescript, jsx",
                         "description": "Additional plugin names for @babel/parser to use (eg: flow, flowComments)"
                     }
                 }
