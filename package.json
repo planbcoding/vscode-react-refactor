@@ -58,7 +58,7 @@
                     "vscodeReactRefactor.babelPlugins": {
                         "type": "string",
                         "default": "objectRestSpread, classProperties, typescript, jsx",
-                        "description": "Additional plugin names for @babel/parser to use (eg: flow, flowComments)"
+                        "description": "List of @babel/parser plugins to use, see: https://babeljs.io/docs/en/babel-parser#plugins"
                     }
                 }
             }

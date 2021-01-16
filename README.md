@@ -28,9 +28,7 @@ This simple extension provides JSX refactor code actions for React developers.
 
 ### Code Action doesn't appear when select JSX code
 
-If something doesn't work don't panic. Probably you use a language feature that is not recognized by the parser within you module (file). Now you immediately get back an error message about what's going on. Use new plugin config, (Babel plugins setting) to configure it for your needs. See: https://babeljs.io/docs/en/babel-parser#plugins.
-
-As Babel was upgraded to the latest version a lot new feature was already added compared to the previous version (eg: optional chaining)
+If something doesn't work don't panic. Probably you use a language feature that is not recognized by the parser within your module (file). Now you get back an error message about what's going on. Use the new Babel plugins setting to configure it for your needs. See: https://babeljs.io/docs/en/babel-parser#plugins.
 
 If no luck please open an issue with
 -   smallest non-working code snippet to reproduce the issue
