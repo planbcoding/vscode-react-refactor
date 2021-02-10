@@ -17,6 +17,12 @@ const getParserOptions = () => {
     }
 }
 
+export const isDebugEnabled = () => {
+    return vscode.workspace
+        .getConfiguration()
+        .get('vscodeReactRefactor.enableDebug');
+}
+
 export const codeToAst = (code: string) =>
     parse(code, <ParserOptions>{
         startLine: 0,
@@ -27,7 +33,9 @@ export const jsxToAst = (code: string) => {
     try {
         return templateToAst(code);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        if (isDebugEnabled())
+            vscode.window.showErrorMessage(error.message);
+
         return false;
     }
 };
@@ -37,8 +45,9 @@ export const templateToAst = (code: string) =>
 
 export const isJSX = (code: string) => {
     const firstChar = code.trim()[0];
-    if (firstChar !== "<") return false;
-    
+    const lastChar = code.trim()[code.length - 1];
+    if (firstChar !== "<" || lastChar !== ">") return false;
+
     const ast = jsxToAst(code);
     return ast && ast.expression && t.isJSX(ast.expression);
 };

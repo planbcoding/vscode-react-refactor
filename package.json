@@ -12,7 +12,7 @@
         "tools"
     ],
     "license": "ISC",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -59,6 +59,11 @@
                         "type": "string",
                         "default": "objectRestSpread, classProperties, typescript, jsx",
                         "description": "List of @babel/parser plugins to use, see: https://babeljs.io/docs/en/babel-parser#plugins"
+                    },
+                    "vscodeReactRefactor.enableDebug": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Display parser error messages"
                     }
                 }
             }

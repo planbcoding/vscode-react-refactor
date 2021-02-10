@@ -12,7 +12,8 @@ import {
     isPathInRange,
     isPathRemoved,
     isFunctionBinding,
-    findComponentMemberReferences
+    findComponentMemberReferences,
+    isDebugEnabled
 } from "../ast";
 import {
     askForName,
@@ -32,7 +33,8 @@ export const extractToComponent = async (produceClass: boolean = false) => {
         await executeFormatCommand();
         resetSelection(editor);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        if (isDebugEnabled())
+            vscode.window.showErrorMessage(error.message);
     }
 };
 
@@ -66,10 +68,11 @@ export const extractToFile = async () => {
         const start = new vscode.Position(insertPos.line, 0);
         const end = new vscode.Position(insertPos.line + cmpLines, 0);
         const selection = new vscode.Selection(start, end);
-        
+
         await executeMoveToNewFileCodeAction(editor.document, selection);
     } catch (error) {
-        vscode.window.showErrorMessage(error.message);
+        if (isDebugEnabled())
+            vscode.window.showErrorMessage(error.message);
     }
 };
 
@@ -90,7 +93,7 @@ export const isCodeActionAvailable = (code: string): Boolean => {
     return isJSX(code);
 };
 
-export const executeFormatCommand = () => 
+export const executeFormatCommand = () =>
     vscode.commands.executeCommand("editor.action.formatDocument");
 
 
@@ -147,19 +150,19 @@ const executeMoveToNewFileCodeAction = async (
     document: vscode.TextDocument,
     rangeOrSelection: vscode.Range | vscode.Selection
 ) => {
-    
-    const codeAction = "Move to a new file";
-//     const args = {
-//         file: document.fileName,
-//         refactor: codeAction,
-//         action: codeAction,
-//         startLine: rangeOrSelection.start.line + 1,
-//         startOffset: rangeOrSelection.start.character + 1,
-//         endLine: rangeOrSelection.end.line + 1,
-//         endOffset: rangeOrSelection.end.character + 1
-//     };
 
-//   await vscode.commands.executeCommand('_typescript.applyCodeActionCommand', args);
+    const codeAction = "Move to a new file";
+    //     const args = {
+    //         file: document.fileName,
+    //         refactor: codeAction,
+    //         action: codeAction,
+    //         startLine: rangeOrSelection.start.line + 1,
+    //         startOffset: rangeOrSelection.start.character + 1,
+    //         endLine: rangeOrSelection.end.line + 1,
+    //         endOffset: rangeOrSelection.end.character + 1
+    //     };
+
+    //   await vscode.commands.executeCommand('_typescript.applyCodeActionCommand', args);
 
     return vscode.commands.executeCommand(
         "_typescript.applyRefactoring",
@@ -323,7 +326,7 @@ const executeCodeAction = (
     const functionTypeConfig: string = vscode.workspace
         .getConfiguration()
         .get('vscodeReactRefactor.functionType');
-        
+
     const createComponent = produceClass
         ? generateClassComponent
         : (functionTypeConfig === 'arrowFunction' ? generateArrowFunctionComponent : generateFunctionalComponent);
@@ -439,9 +442,9 @@ const isPropsObject = (expressionCode: string) =>
 const createPropsExpression = (produceClass, propertyName: string) =>
     produceClass
         ? t.memberExpression(
-              t.memberExpression(t.thisExpression(), t.identifier("props")),
-              t.identifier(propertyName)
-          )
+            t.memberExpression(t.thisExpression(), t.identifier("props")),
+            t.identifier(propertyName)
+        )
         : t.memberExpression(t.identifier("props"), t.identifier(propertyName));
 
 const createJSXElement = (name: string, attributes: {}) => {
