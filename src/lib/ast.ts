@@ -44,8 +44,9 @@ export const templateToAst = (code: string) =>
     template.ast(code, getParserOptions());
 
 export const isJSX = (code: string) => {
-    const firstChar = code.trim()[0];
-    const lastChar = code.trim()[code.length - 1];
+    const trimmed = code.trim();
+    const firstChar = trimmed[0];
+    const lastChar = trimmed[trimmed.length - 1];
     if (firstChar !== "<" || lastChar !== ">") return false;
 
     const ast = jsxToAst(code);
