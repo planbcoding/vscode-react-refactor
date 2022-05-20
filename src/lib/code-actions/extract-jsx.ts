@@ -449,8 +449,8 @@ const createPropsExpression = (produceClass, propertyName: string) =>
 
 const createJSXElement = (name: string, attributes: {}) => {
     const jsxElement = t.jsxElement(
-        t.jsxOpeningElement(t.jsxIdentifier(name), []),
-        t.jsxClosingElement(t.jsxIdentifier(name)),
+        t.jsxOpeningElement(t.jsxIdentifier(name), [], true),
+        null,
         [],
         true
     );
